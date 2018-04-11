@@ -283,13 +283,13 @@ public:
 
 
   inline void updateSSE(
-		  const __m128 J0,const __m128 J1,
-		  const __m128 J2,const __m128 J3,
-		  const __m128 J4,const __m128 J5,
-		  const __m128 J6,const __m128 J7,
-		  const __m128 J8,const __m128 J9,
-		  const __m128 J10,const __m128 J11,
-		  const __m128 J12,const __m128 J13)
+		  const __m128 &J0,const __m128 &J1,
+		  const __m128 &J2,const __m128 &J3,
+		  const __m128 &J4,const __m128 &J5,
+		  const __m128 &J6,const __m128 &J7,
+		  const __m128 &J8,const __m128 &J9,
+		  const __m128 &J10,const __m128 &J11,
+		  const __m128 &J12,const __m128 &J13)
   {
 	  float* pt=SSEData;
 	  _mm_store_ps(pt, _mm_add_ps(_mm_load_ps(pt),_mm_mul_ps(J0,J0))); pt+=4;
@@ -1018,11 +1018,11 @@ public:
 
 
   inline void updateSSE(
-		  const __m128 J0,const __m128 J1,
-		  const __m128 J2,const __m128 J3,
-		  const __m128 J4,const __m128 J5,
-		  const __m128 J6,const __m128 J7,
-		  const __m128 J8)
+		  const __m128 &J0,const __m128 &J1,
+		  const __m128 &J2,const __m128 &J3,
+		  const __m128 &J4,const __m128 &J5,
+		  const __m128 &J6,const __m128 &J7,
+		  const __m128 &J8)
   {
 	  float* pt=SSEData;
 	  _mm_store_ps(pt, _mm_add_ps(_mm_load_ps(pt),_mm_mul_ps(J0,J0))); pt+=4;
@@ -1089,11 +1089,11 @@ public:
 
 
   inline void updateSSE_eighted(
-		  const __m128 J0,const __m128 J1,
-		  const __m128 J2,const __m128 J3,
-		  const __m128 J4,const __m128 J5,
-		  const __m128 J6,const __m128 J7,
-		  const __m128 J8, const __m128 w)
+		  const __m128 &J0,const __m128 &J1,
+		  const __m128 &J2,const __m128 &J3,
+		  const __m128 &J4,const __m128 &J5,
+		  const __m128 &J6,const __m128 &J7,
+		  const __m128 &J8, const __m128 &w)
   {
 	  float* pt=SSEData;
 

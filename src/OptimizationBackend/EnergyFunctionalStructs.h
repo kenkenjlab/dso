@@ -33,10 +33,14 @@
 namespace dso
 {
 
-class PointFrameResidual;
+/*class PointFrameResidual;
 class CalibHessian;
 class FrameHessian;
-class PointHessian;
+class PointHessian;*/
+struct PointFrameResidual;
+struct CalibHessian;
+struct FrameHessian;
+struct PointHessian;
 
 class EFResidual;
 class EFPoint;

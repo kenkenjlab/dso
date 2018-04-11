@@ -1,0 +1,2 @@
+"bin.v2\standalone\ac\main-bz2.cpp" -Fo"bin.v2\standalone\ac\msvc-14.0\release\runtime-link-static\threadapi-win32\threading-multi\main-bz2.obj"    -TP /O2 /Ob2 /W3 /GR /MT /Zc:forScope /Zc:wchar_t /wd4675 /EHs -c 
+-DNDEBUG

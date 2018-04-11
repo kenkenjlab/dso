@@ -38,8 +38,10 @@ namespace cv {
 namespace dso
 {
 
-class FrameHessian;
-class CalibHessian;
+/*class FrameHessian;
+class CalibHessian;*/
+struct FrameHessian;
+struct CalibHessian;
 class FrameShell;
 
 namespace IOWrap

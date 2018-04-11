@@ -472,6 +472,12 @@ void FullSystem::traceNewCoarse(FrameHessian* fh)
 	K(0,2) = Hcalib.cxl();
 	K(1,2) = Hcalib.cyl();
 
+	/*Mat33f K = Mat33f::Identity();
+	K(0, 0) = Hcalib.fxl();
+	K(1, 1) = Hcalib.fyl();
+	K(0, 2) = Hcalib.cxl() - 0.5;
+	K(1, 2) = Hcalib.cyl() - 0.5;*/
+
 	for(FrameHessian* host : frameHessians)		// go through all active frames
 	{
 

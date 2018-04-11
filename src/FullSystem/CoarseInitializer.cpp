@@ -879,7 +879,7 @@ void CoarseInitializer::resetPoints(int lvl)
 		}
 	}
 }
-void CoarseInitializer::doStep(int lvl, float lambda, Vec8f inc)
+void CoarseInitializer::doStep(int lvl, float lambda, Vec8f &inc)
 {
 
 	const float maxPixelStep = 0.25;
@@ -924,7 +924,8 @@ void CoarseInitializer::applyStep(int lvl)
 		pts[i].idepth = pts[i].idepth_new;
 		pts[i].lastHessian = pts[i].lastHessian_new;
 	}
-	std::swap<Vec10f*>(JbBuffer, JbBuffer_new);
+	//std::swap<Vec10f*>(JbBuffer, JbBuffer_new);
+	std::swap(JbBuffer, JbBuffer_new);
 }
 
 void CoarseInitializer::makeK(CalibHessian* HCalib)

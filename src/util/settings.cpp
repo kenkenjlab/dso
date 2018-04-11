@@ -34,6 +34,7 @@ int pyrLevelsUsed = PYR_LEVELS;
 
 /* Parameters controlling when KF's are taken */
 float setting_keyframesPerSecond = 0;   // if !=0, takes a fixed number of KF per second.
+//bool setting_realTimeMaxKF = true;
 bool setting_realTimeMaxKF = false;   // if true, takes as many KF's as possible (will break the system if the camera stays stationary)
 float setting_maxShiftWeightT= 0.04f * (640+480);
 float setting_maxShiftWeightR= 0.0f * (640+480);
@@ -208,6 +209,7 @@ bool setting_render_displayDepth = true;
 bool setting_fullResetRequested = false;
 
 bool setting_debugout_runquiet = false;
+//bool setting_debugout_runquiet = true;
 
 int sparsityFactor = 5;	// not actually a setting, only some legacy stuff for coarse initializer.
 

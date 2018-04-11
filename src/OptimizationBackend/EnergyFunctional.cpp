@@ -279,9 +279,9 @@ void EnergyFunctional::resubstituteF_MT(VecX x, CalibHessian* HCalib, bool MT)
 			            + xF.segment<8>(CPARS+8*t->idx).transpose() * adTargetF[h->idx+nFrames*t->idx];
 	}
 
-	if(MT)
-		red->reduce(boost::bind(&EnergyFunctional::resubstituteFPt,
-						this, cstep, xAd,  _1, _2, _3, _4), 0, allPoints.size(), 50);
+	if (MT)
+		//red->reduce(boost::bind(&EnergyFunctional::resubstituteFPt, this, cstep, xAd,  _1, _2, _3, _4), 0, allPoints.size(), 50);
+		red->reduce(boost::bind(&EnergyFunctional::resubstituteFPt, this, boost::cref(cstep), xAd, _1, _2, _3, _4), 0, allPoints.size(), 50);
 	else
 		resubstituteFPt(cstep, xAd, 0, allPoints.size(), 0,0);
 

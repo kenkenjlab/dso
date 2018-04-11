@@ -36,14 +36,18 @@
 
 namespace dso
 {
-class PointHessian;
+/*class PointHessian;
 class FrameHessian;
-class CalibHessian;
+class CalibHessian;*/
+struct PointHessian;
+struct FrameHessian;
+struct CalibHessian;
 
 class EFResidual;
 
 
 enum ResLocation {ACTIVE=0, LINEARIZED, MARGINALIZED, NONE};
+#undef IN
 enum ResState {IN=0, OOB, OUTLIER};
 
 struct FullJacRowT
@@ -51,7 +55,8 @@ struct FullJacRowT
 	Eigen::Vector2f projectedTo[MAX_RES_PER_POINT];
 };
 
-class PointFrameResidual
+//class PointFrameResidual
+struct PointFrameResidual
 {
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW

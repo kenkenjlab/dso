@@ -21,8 +21,6 @@
 * along with DSO. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-
 #include "PangolinDSOViewer.h"
 #include "KeyFrameDisplay.h"
 
