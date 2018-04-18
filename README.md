@@ -1,3 +1,23 @@
+# Create a Visual Studio Project
+To create the Visual Studio project:
+1. download and compile OpenCV
+2. install CMake GUI
+
+Once you have run the GUI you have to:
+	a. set as src directory the directory called "src"
+   	b. create a "build" directory (for instance as child of the root)
+   	c. Set the path to the dependencies (they are contained in the "thirdparty" directory)
+		i. Eigen -> "Eigen3.2"
+		ii. SuiteSparse -> "SuiteSparse/suite-sparse-metis/SuiteSparse"
+		iii. CSparse -> "SuiteSparse"
+		iv. Pangolin -> "Pangolin/build/src"
+		v. CHOLMOD -> "SuiteSparse/suite-sparse-metis/SuiteSparse"
+		vi. OpenCV -> NB. PathToYourInstallFolder "OpenCV-3.4.1/build"
+   
+
+This repository contains all the .h, .lib and .dll file needed to startup a project.
+
+
 # DSO: Direct Sparse Odometry
 
 For more information see
