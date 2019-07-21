@@ -10,20 +10,23 @@ set(LIBRARY_OUTPUT_PATH lib)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 # set boost static multi-thread libraries
-set (BOOST_ROOT ${PROJECT_SOURCE_DIR}/thirdparty/boost_1_66_0)
-set (Boost_NO_BOOST_CMAKE ON)
-set (Boost_USE_STATIC_LIBS ON) 
-set (Boost_USE_MULTITHREADED ON)
+#set (BOOST_ROOT ${PROJECT_SOURCE_DIR}/thirdparty/boost_1_66_0)
+#set (Boost_NO_BOOST_CMAKE ON)
+#set (Boost_USE_STATIC_LIBS ON) 
+#set (Boost_USE_MULTITHREADED ON)
 
 # required libraries
 find_package(SuiteParse REQUIRED)
 find_package(Eigen3 REQUIRED)
-find_package(Boost 1.66.0 REQUIRED COMPONENTS system thread) 
+#find_package(Boost 1.66.0 REQUIRED COMPONENTS system thread) 
+set (Boost_FOUND ON)
 
 # optional libraries
 find_package(LibZip QUIET)
-find_package(Pangolin 0.2 QUIET)
-find_package(OpenCV QUIET)
+#find_package(Pangolin 0.2 QUIET)
+#find_package(OpenCV QUIET)
+set (Pangolin_FOUND ON)
+set (OpenCV_FOUND ON)
 
 # flags
 add_definitions("-D__SSE3__")
@@ -103,7 +106,7 @@ endif ()
 # decide if we have Boost
 if (Boost_FOUND)
 	message("--- found Boost, compiling dso_boost library.")
-	include_directories( ${Boost_INCLUDE_DIRS} )
+	include_directories( ${PROJECT_SOURCE_DIR}/thirdparty/boost_1_66_0 )
 	set(dso_boost_SOURCE_FILES 
 	  ${PROJECT_SOURCE_DIR}/thirdparty/boost_1_66_0/boost)
 	set(HAS_BOOST 1)
@@ -122,10 +125,15 @@ else()
 	set(LIBZIP_LIBRARY "")
 endif()
 
+# Pangolin externals
+set(PANGOLIN_EXTERNAL_LIB_DIR ${PROJECT_SOURCE_DIR}/thirdparty/Pangolin/build/external)
+#include_directories(${PANGOLIN_EXTERNAL_LIB_DIR}/glew/include)
 
 # compile main library.
 include_directories( ${CSPARSE_INCLUDE_DIR} ${CHOLMOD_INCLUDE_DIR}) 
+#link_directories(${PANGOLIN_EXTERNAL_LIB_DIR}/glew/lib)
 add_library(dso ${dso_SOURCE_FILES} ${dso_opencv_SOURCE_FILES} ${dso_pangolin_SOURCE_FILES} ${dso_boost_SOURCE_FILES})
+#target_link_libraries(dso debug ${PANGOLIN_EXTERNAL_LIB_DIR}/glew/lib/glewd.lib optimized ${PANGOLIN_EXTERNAL_LIB_DIR}/glew/lib/glew.lib)
 
 #set_property( TARGET dso APPEND_STRING PROPERTY COMPILE_FLAGS -Wall )
 
@@ -134,13 +142,18 @@ add_library(dso ${dso_SOURCE_FILES} ${dso_opencv_SOURCE_FILES} ${dso_pangolin_SO
 if (OpenCV_FOUND AND Pangolin_FOUND AND Boost_FOUND)
 	message("--- compiling dso_dataset.")
 	
-	link_directories(${PROJECT_SOURCE_DIR}/boost1.66/lib)
-	link_directories(${PROJECT_SOURCE_DIR}/opencv/x86/vc14/lib)
-	link_directories(${PROJECT_SOURCE_DIR}/Pangolin/lib)
+	link_directories(C:/boost_1_66_0/lib32-msvc-14.1)
+	link_directories(${PROJECT_SOURCE_DIR}/thirdparty/opencv/x86/vc14/lib)
+	link_directories(${PROJECT_SOURCE_DIR}/thirdparty/Pangolin/build/src/)
+	link_directories(${PANGOLIN_EXTERNAL_LIB_DIR}/glew/lib)
+	link_directories(${PANGOLIN_EXTERNAL_LIB_DIR}/libpng/lib)
+	link_directories(${PANGOLIN_EXTERNAL_LIB_DIR}/libjpeg/lib)
+	link_directories(C:/libzip-win-build/build-VS2017/)
 	add_executable(dso_dataset ${PROJECT_SOURCE_DIR}/src/main_dso_pangolin.cpp )
-	target_link_libraries(dso_dataset dso)
+	target_link_libraries(dso_dataset dso glu32.lib opengl32.lib)  # Added
+	set(DLL_DIRECTORY ${PROJECT_SOURCE_DIR}/thirdparty/Pangolin/build/external/libpng/bin ${PROJECT_SOURCE_DIR}/thirdparty/Pangolin/build/external/zlib/bin ${PROJECT_SOURCE_DIR}/thirdparty/opencv/x86/vc14/bin)
     #target_link_libraries(dso_dataset dso boost_system cxsparse ${BOOST_THREAD_LIBRARY} ${LIBZIP_LIBRARY} ${Pangolin_LIBRARIES} ${OpenCV_LIBS})
-	
+
 else()
 	message("--- not building dso_dataset, since either don't have openCV or Pangolin.")
 endif()

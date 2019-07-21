@@ -50,24 +50,41 @@
 #include "opencv2/videoio.hpp"
 #include "opencv2/highgui.hpp"
 
-#include <GL/freeglut.h>
+//#include <GL/freeglut.h>
 
 #pragma comment(lib, "dso.lib")
-#pragma comment(lib, "pangolin.lib")
 #pragma comment(lib, "glew.lib")
-#pragma comment(lib,"libpng16.lib")
-#pragma comment(lib,"jpeg.lib")
+#pragma comment(lib, "libpng16.lib")
+#pragma comment(lib, "jpeg.lib")
+#pragma comment(lib, "libzip.lib")
+#pragma comment(lib, "pangolin.lib")
 
-#pragma comment(lib, "libboost_thread-vc140-mt-s-x32-1_66.lib")
-#pragma comment(lib, "libboost_system-vc140-mt-s-x32-1_66.lib")
-#pragma comment(lib, "libboost_date_time-vc140-mt-s-x32-1_66.lib")
-#pragma comment(lib, "libboost_chrono-vc140-mt-s-x32-1_66.lib")
+#ifdef _DEBUG
+#pragma comment(lib, "libboost_thread-vc141-mt-gd-x32-1_66.lib")
+#pragma comment(lib, "libboost_system-vc141-mt-gd-x32-1_66.lib")
+#pragma comment(lib, "libboost_date_time-vc141-mt-gd-x32-1_66.lib")
+#pragma comment(lib, "libboost_chrono-vc141-mt-gd-x32-1_66.lib")
+#else
+#pragma comment(lib, "libboost_thread-vc141-mt-s-x32-1_66.lib")
+#pragma comment(lib, "libboost_system-vc141-mt-s-x32-1_66.lib")
+#pragma comment(lib, "libboost_date_time-vc141-mt-s-x32-1_66.lib")
+#pragma comment(lib, "libboost_chrono-vc141-mt-s-x32-1_66.lib")
+#endif
 
+#ifdef _DEBUG
+#pragma comment(lib,"opencv_core341d.lib")
+#pragma comment(lib,"opencv_highgui341d.lib")
+#pragma comment(lib,"opencv_imgproc341d.lib")
+#pragma comment(lib,"opencv_imgcodecs341d.lib")
+#pragma comment(lib,"opencv_videoio341d.lib")
+
+#else
 #pragma comment(lib,"opencv_core341.lib")
 #pragma comment(lib,"opencv_highgui341.lib")
 #pragma comment(lib,"opencv_imgproc341.lib")
 #pragma comment(lib,"opencv_imgcodecs341.lib")
 #pragma comment(lib,"opencv_videoio341.lib")
+#endif
 
 #define IMAGE_WIDTH 320
 #define IMAGE_HEIGHT 240
@@ -340,17 +357,9 @@ void parseArgument(char* arg) {
 
 int main(int argc, char** argv) {
 
-	VideoCapture cap(0);
-	cap.set(CAP_PROP_FRAME_WIDTH, IMAGE_WIDTH); // valueX = your wanted width 
-	cap.set(CAP_PROP_FRAME_HEIGHT, IMAGE_HEIGHT); // valueY = your wanted heigth   
+	for (int i = 1; i<argc; i++)
+		parseArgument(argv[i]);
 
-										 //setlocale(LC_ALL, "");
-	//for (int i = 1; i<argc; i++)
-		//parseArgument(argv[i]);
-
-	calib = "sequenceWebcam/camera.txt";
-	source = "sequenceWebcam/images";
-	
 	int option = 1;
 	mode = option;
 	if (option == 0) 
@@ -371,7 +380,7 @@ int main(int argc, char** argv) {
 		setting_minGradHistAdd = 3;
 	}
 
-	settingsDefault(3);
+	//settingsDefault(3);
 
 	dso::setting_debugout_runquiet = true;
 	dso::setting_maxShiftWeightT = 0.04f * (IMAGE_WIDTH + IMAGE_HEIGHT);
@@ -430,45 +439,62 @@ int main(int argc, char** argv) {
 			}
 		}
 
-		
+		std::vector<ImageAndExposure*> preloadedImages;
+		if (preload)
+		{
+			printf("LOADING ALL IMAGES!\n");
+			for (int ii = 0; ii < (int)idsToPlay.size(); ii++)
+			{
+				int i = idsToPlay[ii];
+				preloadedImages.push_back(reader->getImage(i));
+			}
+		}
 
 		struct timeval tv_start;
 		gettimeofday(&tv_start, NULL);
 		clock_t started = clock();
 		double sInitializerOffset = 0;
 
-		//for (int ii = 0; ii < (int)idsToPlay.size(); ii++) {
-		int ii = -1;
-		while (true) {
-			
-			ii++;
-			//printf("\n-- START OF FRAME %d \n", ii);
-
-			if (!fullSystem->initialized) {	// if not initialized: reset start time.
+		for (int ii = 0; ii < (int)idsToPlay.size(); ii++)
+		{
+			if (!fullSystem->initialized)	// if not initialized: reset start time.
+			{
 				gettimeofday(&tv_start, NULL);
 				started = clock();
 				sInitializerOffset = timesToPlayAt[ii];
 			}
 
-			//int i = idsToPlay[ii];
-			int i = ii;
-			
-			cap.read(camframe);
-			//double fps = cap.get(CV_CAP_PROP_FPS);
-			//std::cout << "FPS: " << fps << std::endl;
+			int i = idsToPlay[ii];
+
 
 			ImageAndExposure* img;
-			img = new ImageAndExposure(IMAGE_WIDTH, IMAGE_HEIGHT, 0);
+			if (preload)
+				img = preloadedImages[ii];
+			else
+				img = reader->getImage(i);
 
-			cvtColor(camframe, gray, COLOR_BGR2GRAY);
 
-			for (int k = 0; k<gray.rows; k++)
-				for (int j = 0; j<gray.cols; j++) {
-					//img->image[(k*IMAGE_WIDTH)+j] = gray.at<cv::Vec3b>(k,j)[0];
-					img->image[(k * IMAGE_WIDTH) + j] = gray.at<uchar>(k, j);
+
+			bool skipFrame = false;
+			if (playbackSpeed != 0)
+			{
+				struct timeval tv_now; gettimeofday(&tv_now, NULL);
+				double sSinceStart = sInitializerOffset + ((tv_now.tv_sec - tv_start.tv_sec) + (tv_now.tv_usec - tv_start.tv_usec) / (1000.0f*1000.0f));
+
+				if (sSinceStart < timesToPlayAt[ii])
+				{
+					//usleep((int)((timesToPlayAt[ii] - sSinceStart) * 1000 * 1000));
 				}
-		
-			fullSystem->addActiveFrame(img, i);
+				else if (sSinceStart > timesToPlayAt[ii] + 0.5 + 0.1*(ii % 2))
+				{
+					printf("SKIPFRAME %d (play at %f, now it is %f)!\n", ii, timesToPlayAt[ii], sSinceStart);
+					skipFrame = true;
+				}
+			}
+
+
+
+			if (!skipFrame) fullSystem->addActiveFrame(img, i);
 
 			delete img;
 

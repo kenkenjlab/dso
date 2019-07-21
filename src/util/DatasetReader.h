@@ -29,7 +29,11 @@
 
 #include <sstream>
 #include <fstream>
+#ifdef _MSC_VER
+#include <io.h>
+#else
 #include <dirent.h>
+#endif
 #include <algorithm>
 
 #include "util/Undistort.h"
@@ -43,10 +47,24 @@
 
 using namespace dso;
 
-
-
-inline int getdir (std::string dir, std::vector<std::string> &files)
+inline int getdir(std::string dir, std::vector<std::string> &files)
 {
+#ifdef _MSC_VER
+	struct _finddata_t fdata;
+	intptr_t fh = _findfirst(dir.c_str(), &fdata);
+	if (-1 == fh)
+	{
+		return -1;
+	}
+
+	do {
+		std::string name = std::string(fdata.name);
+		if (name != "." && name != "..")
+			files.push_back(name);
+	} while (0 == _findnext(fh, &fdata));
+
+	_findclose(fh);
+#else
     DIR *dp;
     struct dirent *dirp;
     if((dp  = opendir(dir.c_str())) == NULL)
@@ -61,8 +79,7 @@ inline int getdir (std::string dir, std::vector<std::string> &files)
     		files.push_back(name);
     }
     closedir(dp);
-
-
+#endif
     std::sort(files.begin(), files.end());
 
     if(dir.at( dir.length() - 1 ) != '/') dir = dir+"/";
